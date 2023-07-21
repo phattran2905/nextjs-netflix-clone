@@ -1,11 +1,23 @@
-import { prisma } from "@/lib/db";
 import NextAuth from "next-auth";
 import Credentials from "next-auth/providers/credentials";
-import bcrypt, { compare } from "bcrypt";
+import GoogleProvider from "next-auth/providers/google";
+import GithubProvider from "next-auth/providers/github";
+import { PrismaAdapter } from "@next-auth/prisma-adapter";
+import bcrypt from "bcrypt";
+
+import { prisma } from "@/lib/db";
 
 const handler = NextAuth({
 	// Configure one or more authentication providers
 	providers: [
+		GithubProvider({
+			clientId: process.env.GITHUB_ID,
+			clientSecret: process.env.GITHUB_SECRET,
+		}),
+		GoogleProvider({
+			clientId: process.env.GOOGLE_CLIENT_ID,
+			clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+		}),
 		Credentials({
 			id: "credentials",
 			name: "Credentials",
@@ -34,10 +46,10 @@ const handler = NextAuth({
 					throw new Error("Email does not exist");
 				}
 
-				const isCorrectPassword = await compare(credentials.password, user.hashedPassword);
+				const isCorrectPassword = await bcrypt.compare(credentials.password, user.hashedPassword);
 
 				if (!isCorrectPassword) {
-					throw new Error("Error is incorrect");
+					throw new Error("Password is incorrect");
 				}
 
 				return user;
@@ -48,6 +60,7 @@ const handler = NextAuth({
 		signIn: "/auth",
 	},
 	debug: process.env.NODE_ENV === "development",
+	adapter: PrismaAdapter(prisma),
 	session: {
 		strategy: "jwt",
 	},

@@ -3,7 +3,7 @@ import Image from "next/image";
 export default function Home() {
 	return (
 		<main>
-			<h1>Netflix Clone</h1>
+			<h1 className="text-white">Netflix Clone</h1>
 		</main>
 	);
 }
