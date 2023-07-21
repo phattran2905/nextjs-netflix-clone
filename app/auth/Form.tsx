@@ -1,19 +1,67 @@
 "use client";
 import Input from "@/components/Input";
+import { useRouter } from "next/navigation";
 import { useCallback, useState } from "react";
+import { signIn } from "next-auth/react";
 
 type Props = {};
 export default function Form({}: Props) {
-	const [username, setUsername] = useState<string>("");
+	const router = useRouter();
+
+	const [name, setUsername] = useState<string>("");
 	const [email, setEmail] = useState<string>("");
 	const [password, setPassword] = useState<string>("");
+	const [error, setError] = useState<string>("");
 
 	const [variant, setVariant] = useState<string>("login");
 	const toggleVariant = useCallback(() => {
+		setError("");
 		setVariant((currentVariant) => (currentVariant === "login" ? "register" : "login"));
 	}, []);
 
-	const onSubmitForm = () => {};
+	const login = useCallback(async () => {
+		setError("");
+		try {
+			await signIn("credentials", {
+				email,
+				password,
+				redirect: false,
+				callbackUrl: "/",
+			});
+
+			router.push("/profiles");
+		} catch (error) {
+			console.log(error);
+			setError("Failed to login.");
+		}
+	}, [email, password, router]);
+
+	const register = useCallback(async () => {
+		setError("");
+		try {
+			const res = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/register`, {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify({
+					email,
+					name,
+					password,
+				}),
+			});
+
+			const { error } = await res.json();
+			if (error) {
+				return setError(error);
+			}
+
+			login();
+		} catch (error) {
+			console.log(error);
+			setError("Failed to register.");
+		}
+	}, [email, name, password]);
 
 	return (
 		<>
@@ -25,8 +73,8 @@ export default function Form({}: Props) {
 					<Input
 						label="Username"
 						onChange={(e) => setUsername(e.target.value)}
-						id="username"
-						value={username}
+						id="name"
+						value={name}
 						type="text"
 					/>
 				)}
@@ -45,12 +93,21 @@ export default function Form({}: Props) {
 					type="password"
 				/>
 			</div>
-			<button className="bg-red-600 py-3 text-white rounded-md w-full mt-10 hover:bg-red-700 transition">
+			{/* Error */}
+			{error && (
+				<div className="my-3 bg-red-300">
+					<p className="font-bold text-red-700 p-2 rounded-md text-sm">{error}</p>
+				</div>
+			)}
+
+			<button
+				onClick={variant === "login" ? login : register}
+				className="bg-red-600 py-3 text-white rounded-md w-full mt-10 hover:bg-red-700 transition"
+			>
 				{variant === "login" ? "Login" : "Sign up"}
 			</button>
 			<p className="text-neutral-500 mt-12 text-sm text-center">
 				{variant === "login" ? "First time using Netflix?" : "Already have an account?"}
-
 				<span
 					onClick={toggleVariant}
 					className="text-white ml-1 hover:underline cursor-pointer"
