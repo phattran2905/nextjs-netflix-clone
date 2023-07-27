@@ -25,16 +25,12 @@ export default function Form({}: Props) {
 	const login = useCallback(async () => {
 		setError("");
 		try {
-			const res = await signIn("credentials", {
+			signIn("credentials", {
 				email,
 				password,
-				redirect: false,
+				redirect: true,
 				callbackUrl: "/profiles",
 			});
-
-			if (res?.error) {
-				setError(res?.error);
-			}
 		} catch (error) {
 			setError("Failed to login.");
 		}

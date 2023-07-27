@@ -3,7 +3,7 @@
 import useCurrentUser from "@/hooks/useCurrentUser";
 import { useSession } from "next-auth/react";
 import { redirect, useRouter } from "next/navigation";
-import { useCallback } from "react";
+import { useCallback, useMemo } from "react";
 
 type Props = {};
 
@@ -15,15 +15,7 @@ export default function Profiles({}: Props) {
 			return redirect("/auth");
 		},
 	});
-
-	const user = useCallback(() => {
-		if (session) {
-			const { data } = useCurrentUser();
-			return data;
-		}
-
-		return null;
-	}, [session]);
+	const { data: user } = useCurrentUser();
 
 	return (
 		<div className="flex items-center h-full justify-center">
