@@ -1,8 +1,17 @@
 import Image from "next/image";
 import Form from "./Form";
+import { getServerSession } from "next-auth";
+import { authOptions } from "../api/auth/[...nextauth]/options";
+import { redirect } from "next/navigation";
 
 type Props = {};
-export default function Auth({}: Props) {
+export default async function Auth({}: Props) {
+	const session = await getServerSession(authOptions);
+
+	if (session) {
+		return redirect("/profiles");
+	}
+
 	return (
 		<div className="relative h-full w-full bg-[url('/images/hero.jpg')] bg-no-repeat bg-center bg-fixed bg-cover">
 			<div className="bg-black w-full h-full lg:bg-opacity-50">

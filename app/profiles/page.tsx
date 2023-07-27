@@ -2,28 +2,35 @@
 
 import useCurrentUser from "@/hooks/useCurrentUser";
 import { useSession } from "next-auth/react";
-import { redirect } from "next/navigation";
+import { redirect, useRouter } from "next/navigation";
+import { useCallback } from "react";
 
 type Props = {};
 
 export default function Profiles({}: Props) {
+	const router = useRouter();
 	const { data: session } = useSession({
 		required: true,
 		onUnauthenticated() {
-			redirect("/auth");
+			return redirect("/auth");
 		},
 	});
-	const { data: user } = useCurrentUser();
+
+	const user = useCallback(() => {
+		if (session) {
+			const { data } = useCurrentUser();
+			return data;
+		}
+
+		return null;
+	}, [session]);
 
 	return (
 		<div className="flex items-center h-full justify-center">
 			<div className="flex flex-col">
 				<h1 className="text-3xl md:text-6xl text-white text-center">Who is watching?</h1>
 				<div className="flex items-center justify-center gap-8 mt-10">
-					<div
-						onClick={() => {}}
-						className=""
-					>
+					<div onClick={() => router.push("/")}>
 						<div className="group flex-row w-44 mx-auto">
 							<div className="w-44 h-44 rounded-md flex items-center justify-center border-2 border-transparent group-hover:cursor-pointer group-hover:border-white overflow-hidden">
 								<img
