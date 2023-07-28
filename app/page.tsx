@@ -7,23 +7,26 @@ import TrendingNow from "@/components/TrendingNow";
 import InfoModal from "@/components/InfoModal";
 import InfoModalWrapper from "@/components/InfoModalWrapper";
 import FavoriteList from "@/components/FavoriteList";
+import AuthProvider from "@/context/AuthProvider";
 
 export default async function Home() {
-	// const session = await getServerSession(authOptions);
-	// console.log(session);
-	// if (!session) {
-	// 	return redirect("/auth");
-	// }
+	const session = await getServerSession(authOptions);
+	console.log(session);
+	if (!session) {
+		return redirect("/auth");
+	}
 
 	return (
-		<main>
-			<InfoModalWrapper />
-			<Navbar />
-			<Billboard />
-			<div className="pb-40">
-				<TrendingNow />
-				<FavoriteList />
-			</div>
-		</main>
+		<AuthProvider>
+			<main>
+				<InfoModalWrapper />
+				<Navbar />
+				<Billboard />
+				<div className="pb-40">
+					<TrendingNow />
+					<FavoriteList />
+				</div>
+			</main>
+		</AuthProvider>
 	);
 }
