@@ -1,3 +1,5 @@
+"use client";
+
 type Props = {
 	id: string;
 	onChange: (e: any) => void;
