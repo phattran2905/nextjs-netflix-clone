@@ -1,5 +1,6 @@
 "use client";
 
+import useCurrentUser from "@/hooks/useCurrentUser";
 import { signOut } from "next-auth/react";
 
 type Props = {
@@ -7,6 +8,8 @@ type Props = {
 };
 
 export default function AccountMenu({ visible }: Props) {
+	const { data } = useCurrentUser();
+
 	if (!visible) {
 		return null;
 	}
@@ -20,7 +23,7 @@ export default function AccountMenu({ visible }: Props) {
 						src="/images/default-blue.png"
 						alt="profile"
 					/>
-					<p className="text-white text-sm group-hover/item:underline">Username</p>
+					<p className="text-white text-sm group-hover/item:underline">{data?.name}</p>
 				</div>
 				<hr className="bg-gray-600 border-0 h-px my-4" />
 				<div
