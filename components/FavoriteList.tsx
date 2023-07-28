@@ -1,3 +1,4 @@
+"use client";
 import useFavorites from "@/hooks/useFavorites";
 import MovieList from "./MovieList";
 

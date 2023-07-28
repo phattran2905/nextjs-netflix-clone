@@ -58,7 +58,6 @@ export default function Form({}: Props) {
 
 			login();
 		} catch (error) {
-			console.log(error);
 			setError("Failed to register.");
 		}
 	}, [email, name, password]);
