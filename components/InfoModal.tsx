@@ -15,7 +15,7 @@ export default function InfoModal({ visible, onClose }: Props) {
 	const [isVisible, setIsVisible] = useState<boolean>(!!visible);
 	const { movieId } = useInfoModal();
 	const { data = {} } = useMovie(movieId);
-	console.log(movieId);
+
 	useEffect(() => {
 		setIsVisible(!!visible);
 	}, [isVisible]);
